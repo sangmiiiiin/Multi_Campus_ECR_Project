@@ -54,6 +54,12 @@ variable "port_8888" {
   type = string
 }
 
+
+variable "port_443" {
+  type = string
+}
+
+
 #rds
 variable "db_subnet" {
   type = list(string)
