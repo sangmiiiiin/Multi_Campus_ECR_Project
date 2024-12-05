@@ -37,3 +37,7 @@ output "web_ecs_sg" {
 output "was_ecs_sg" {
   value = aws_security_group.was_sg.id
 }
+
+output "monitoring_sg" {
+  value = aws_security_group.monitoring_sg.id
+}

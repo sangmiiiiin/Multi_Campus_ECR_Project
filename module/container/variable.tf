@@ -1,5 +1,5 @@
 variable "tag_name" {
-  type = string  
+  type = string
 }
 
 variable "container_name" {
@@ -70,15 +70,15 @@ variable "assign_public_ip" {
 ### ECS Definition
 
 variable "front_container_definitions" {
-    type = string
+  type = string
 }
 
 variable "job_container_definitions" {
-    type = string
+  type = string
 }
 
 variable "app_container_definitions" {
-    type = string
+  type = string
 }
 
 
@@ -100,9 +100,9 @@ variable "task_def_memory" {
 }
 
 variable "front_health_check_grace_period_seconds" {
-    type = string
+  type = string
 }
 
 variable "back_health_check_grace_period_seconds" {
-    type = string
+  type = string
 }

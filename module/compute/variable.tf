@@ -6,7 +6,7 @@ variable "tag_name" {
   type = string
 }
 
-variable "ami_amznlinux2" {
+variable "ami_amznlinux3" {
   type = string
 }
 
@@ -26,11 +26,19 @@ variable "pub_subnet" {
   type = list(string)
 }
 
+variable "pri_subnet" {
+  type = list(string)
+}
+
 variable "lb_type_application" {
   type = string
 }
 
 variable "bastion_sg" {
+  type = string
+}
+
+variable "monitoring_sg" {
   type = string
 }
 
@@ -42,6 +50,9 @@ variable "was_alb_sg" {
   type = string
 }
 
+variable "port_HTTP" {
+  type = string
+}
 variable "port_80" {
   type = string
 }
@@ -54,6 +65,9 @@ variable "port_8888" {
   type = string
 }
 
+variable "port_3000" {
+  type = string
+}
 
 variable "port_443" {
   type = string
@@ -82,19 +96,19 @@ variable "db_allocated_storage" {
 }
 
 variable "db_instance_class" {
-  type = string  
+  type = string
 }
 
 variable "db_username" {
-  type = string  
+  type = string
 }
 
 variable "db_password" {
-  type = string  
+  type = string
 }
 
 variable "db_storage_type" {
-  type = string  
+  type = string
 }
 
 variable "db_port" {
