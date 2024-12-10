@@ -2,6 +2,7 @@
 resource "aws_ecs_cluster" "ECSCluster" {
     name = "${var.tag_name}-ecs-cluster"
 }
+
 ### ECS Front Service
 resource "aws_ecs_service" "ECS_Service_front" {
     name = "${var.tag_name}-front-service"
@@ -26,6 +27,7 @@ resource "aws_ecs_service" "ECS_Service_front" {
 }
 
 ### ECS Backend Service 생성 ###
+### JobPosting ###
 resource "aws_ecs_service" "ECS_Service_job" {
     name = "${var.tag_name}-back-job-service"
     cluster = aws_ecs_cluster.ECSCluster.arn
@@ -48,7 +50,7 @@ resource "aws_ecs_service" "ECS_Service_job" {
     health_check_grace_period_seconds = var.back_health_check_grace_period_seconds
 }
 
-
+### Applicant ###
 resource "aws_ecs_service" "ECS_Service_app" {
     name = "${var.tag_name}-back-app-service"
     cluster = aws_ecs_cluster.ECSCluster.arn
@@ -72,9 +74,36 @@ resource "aws_ecs_service" "ECS_Service_app" {
 }
 
 ### ECS Task 정의 생성 ###
-
+### Front ###
 resource "aws_ecs_task_definition" "ECS_Task_Def_front" {
-    container_definitions = var.front_container_definitions
+    
+    container_definitions    = jsonencode([
+    {
+      name            = "${var.container_name}-front"
+      image           = "${var.account}.dkr.ecr.${var.region}.amazonaws.com/${var.container_name}-frontend:web"
+      cpu             = 0
+      essential       = true
+      portMappings    = [
+        {
+          containerPort = tonumber(var.front_container_port) # 숫자로 변환
+          hostPort      = tonumber(var.front_container_port) # 숫자로 변환
+          protocol      = var.protocol_tcp
+          name          = "web-${var.front_container_port}"
+          appProtocol   = var.protocol_http
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-create-group = "true"
+          awslogs-group        = "/ecs/${var.tag_name}-front-task-1"
+          awslogs-region       = "${var.region}"
+          awslogs-stream-prefix = "ecs"
+        }
+      }
+    }
+  ])
+
     family = "${var.tag_name}-front-task-1"
     execution_role_arn = var.execution_role_arn
     network_mode = var.network_mode
@@ -85,8 +114,38 @@ resource "aws_ecs_task_definition" "ECS_Task_Def_front" {
     memory = var.task_def_memory
 }
 
+### Backend Jobposting ###
 resource "aws_ecs_task_definition" "ECS_Task_Def_job" {
-    container_definitions = var.job_container_definitions
+
+### Backend Jobposting ###
+
+
+    container_definitions    = jsonencode([
+    {
+      name            = "${var.container_name}-back-jobposting"
+      image           = "${var.account}.dkr.ecr.${var.region}.amazonaws.com/${var.container_name}-backend:jobposting"
+      cpu             = 0
+      essential       = true
+      portMappings    = [
+        {
+          containerPort = tonumber(var.job_container_port)
+          hostPort      = tonumber(var.job_container_port)
+          protocol      = var.protocol_tcp
+          name          = "jobposting-${var.job_container_port}"
+          appProtocol   = var.protocol_http
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-create-group = "true"
+          awslogs-group        = "/ecs/${var.tag_name}-back-job-task-1"
+          awslogs-region       = "${var.region}"
+          awslogs-stream-prefix = "ecs"
+        }
+      }
+    }
+  ])
     family = "${var.tag_name}-back-job-task-1"
     execution_role_arn = var.execution_role_arn
     network_mode = var.network_mode
@@ -97,8 +156,35 @@ resource "aws_ecs_task_definition" "ECS_Task_Def_job" {
     memory = var.task_def_memory
 }
 
+### Backend Applicant ###
 resource "aws_ecs_task_definition" "ECS_Task_Def_app" {
-    container_definitions = var.app_container_definitions
+
+    container_definitions    = jsonencode([
+    {
+      name            = "${var.container_name}-back-applicant"
+      image           = "${var.account}.dkr.ecr.${var.region}.amazonaws.com/${var.container_name}-backend:applicant"
+      cpu             = 0
+      essential       = true
+      portMappings    = [
+        {
+          containerPort = tonumber(var.app_container_port)
+          hostPort      = tonumber(var.app_container_port)
+          protocol      = var.protocol_tcp
+          name          = "applicant-${var.app_container_port}"
+          appProtocol   = var.protocol_http
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-create-group = "true"
+          awslogs-group        = "/ecs/${var.tag_name}-back-app-task-1"
+          awslogs-region       = "${var.region}"
+          awslogs-stream-prefix = "ecs"
+        }
+      }
+    }
+  ])
     family = "${var.tag_name}-back-app-task-1"
     execution_role_arn = var.execution_role_arn
     network_mode = var.network_mode

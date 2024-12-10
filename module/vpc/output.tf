@@ -41,3 +41,7 @@ output "was_ecs_sg" {
 output "monitoring_sg" {
   value = aws_security_group.monitoring_sg.id
 }
+
+output "protocol_tcp" {
+  value = var.protocol_tcp
+}

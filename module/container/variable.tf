@@ -2,6 +2,22 @@ variable "tag_name" {
   type = string
 }
 
+variable "region" {
+    type = string
+}
+
+variable "account" {
+    type = string
+}
+
+variable "protocol_http" {
+      type = string
+}
+
+variable "protocol_tcp" {
+  type = string
+}
+
 variable "container_name" {
   type = string
 }
@@ -68,18 +84,6 @@ variable "assign_public_ip" {
 
 
 ### ECS Definition
-
-variable "front_container_definitions" {
-  type = string
-}
-
-variable "job_container_definitions" {
-  type = string
-}
-
-variable "app_container_definitions" {
-  type = string
-}
 
 
 variable "execution_role_arn" {

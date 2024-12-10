@@ -1,5 +1,7 @@
 locals {
   tag_name = "jinwoo-ap2"
+  region = "ap-northeast-2"
+  account = "981638470970"
 }
 
 #######################################################
@@ -9,7 +11,7 @@ locals {
 module "vpc" {
   source = "./module/vpc"
 
-  region       = "ap-northeast-2"
+  region       = local.region
   cidr_main    = "10.0.0.0/16"
   tag_name     = local.tag_name
   ava_zone     = ["a", "c"]
@@ -38,7 +40,7 @@ module "vpc" {
 module "compute" {
   source = "./module/compute"
 
-  region              = "ap-northeast-2"
+  region              = local.region
   ava_zone            = ["a", "c"]
   tag_name            = local.tag_name
   ami_amznlinux3      = "ami-0f1e61a80c7ab943e"
@@ -78,12 +80,15 @@ module "compute" {
 
 module "container" {
   source = "./module/container"
-
+  region                             = local.region
   tag_name                           = local.tag_name
+  account = local.account
   container_name                     = "jinwoo"
   front_arn                          = module.compute.aws_lb_target_group_80
   app_back_tg_arn                    = module.compute.aws_lb_target_group_8080
   job_back_tg_arn                    = module.compute.aws_lb_target_group_8888
+  protocol_tcp = module.vpc.protocol_tcp
+  protocol_http = "http"
   front_container_port               = "80"
   job_container_port                 = "8888"
   app_container_port                 = "8080"
@@ -101,9 +106,6 @@ module "container" {
   front_health_check_grace_period_seconds = "0"
   back_health_check_grace_period_seconds  = "30"
 
-  front_container_definitions = "[{\"name\":\"jinwoo-front\",\"image\":\"981638470970.dkr.ecr.ap-northeast-2.amazonaws.com/jinwoo-frontend:web\",\"cpu\":0,\"portMappings\":[{\"containerPort\":80,\"hostPort\":80,\"protocol\":\"tcp\",\"name\":\"web-80\",\"appProtocol\":\"http\"}],\"essential\":true,\"environment\":[],\"mountPoints\":[],\"volumesFrom\":[],\"logConfiguration\":{\"logDriver\":\"awslogs\",\"options\":{\"awslogs-create-group\":\"true\",\"awslogs-group\":\"/ecs/jinwoo-ap2-front-task-1\",\"awslogs-region\":\"ap-northeast-2\",\"awslogs-stream-prefix\":\"ecs\"}},\"systemControls\":[]}]"
-  job_container_definitions   = "[{\"name\":\"jinwoo-back-jobposting\",\"image\":\"981638470970.dkr.ecr.ap-northeast-2.amazonaws.com/jinwoo-backend:jobposting\",\"cpu\":0,\"portMappings\":[{\"containerPort\":8888,\"hostPort\":8888,\"protocol\":\"tcp\",\"name\":\"jobposting-8888\",\"appProtocol\":\"http\"}],\"essential\":true,\"environment\":[],\"mountPoints\":[],\"volumesFrom\":[],\"logConfiguration\":{\"logDriver\":\"awslogs\",\"options\":{\"awslogs-create-group\":\"true\",\"awslogs-group\":\"/ecs/jinwoo-ap2-back-job-task-1\",\"awslogs-region\":\"ap-northeast-2\",\"awslogs-stream-prefix\":\"ecs\"}},\"systemControls\":[]}]"
-  app_container_definitions   = "[{\"name\":\"jinwoo-back-applicant\",\"image\":\"981638470970.dkr.ecr.ap-northeast-2.amazonaws.com/jinwoo-backend:applicant\",\"cpu\":0,\"portMappings\":[{\"containerPort\":8080,\"hostPort\":8080,\"protocol\":\"tcp\",\"name\":\"applicant-8080\",\"appProtocol\":\"http\"}],\"essential\":true,\"environment\":[],\"mountPoints\":[],\"volumesFrom\":[],\"logConfiguration\":{\"logDriver\":\"awslogs\",\"options\":{\"awslogs-create-group\":\"true\",\"awslogs-group\":\"/ecs/jinwoo-ap2-back-app-task-1\",\"awslogs-region\":\"ap-northeast-2\",\"awslogs-stream-prefix\":\"ecs\"}},\"systemControls\":[]}]"
   execution_role_arn          = "arn:aws:iam::981638470970:role/ecsTaskExecutionRole"
   network_mode                = "awsvpc"
   task_def_cpu                = "512"
