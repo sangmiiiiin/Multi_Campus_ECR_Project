@@ -1,2 +1,4 @@
-# weplat-recruit-terraform-code
+# jinwoo-recruit-terraform-code
 Terraform code for configuring recruit infrastructure
+
+## VPC, Compute, ECS
