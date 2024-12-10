@@ -1,3 +1,14 @@
+### 수정 필요 부분
+# 1. local
+## tag_name
+## region
+## account
+# 2. compute
+## db_username
+## db_password
+# 3. container
+## container_name 
+
 locals {
   tag_name = "jinwoo-ap2"
   region = "ap-northeast-2"
@@ -106,7 +117,7 @@ module "container" {
   front_health_check_grace_period_seconds = "0"
   back_health_check_grace_period_seconds  = "30"
 
-  execution_role_arn          = "arn:aws:iam::981638470970:role/ecsTaskExecutionRole"
+  execution_role_arn          = "arn:aws:iam::${local.account}:role/ecsTaskExecutionRole"
   network_mode                = "awsvpc"
   task_def_cpu                = "512"
   task_def_memory             = "1024"
