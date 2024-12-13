@@ -10,6 +10,18 @@ variable "ami_amznlinux3" {
   type = string
 }
 
+variable "key_name" {
+  type = string
+}
+
+variable "ami_ubuntu20_04" {
+  type = string
+}
+
+variable "acm_arn" {
+  type = string
+}
+
 variable "ec2_type_bastion" {
   type = string
 }
@@ -50,7 +62,11 @@ variable "was_alb_sg" {
   type = string
 }
 
-variable "port_HTTP" {
+variable "host_header" {
+  type = string
+}
+
+variable "protocol" {
   type = string
 }
 variable "port_80" {

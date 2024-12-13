@@ -6,13 +6,16 @@
 # 2. compute
 ## db_username
 ## db_password
+## acm_arn
+## key_name
+## ami_ubuntu20_04 -> 필요시 변경
 # 3. container
 ## container_name 
 
 locals {
   tag_name = "jinwoo-ap2"
-  region = "ap-northeast-2"
-  account = "981638470970"
+  region   = "ap-northeast-2"
+  account  = "981638470970"
 }
 
 #######################################################
@@ -54,7 +57,11 @@ module "compute" {
   region              = local.region
   ava_zone            = ["a", "c"]
   tag_name            = local.tag_name
+  key_name            = "jinwoo-ap2"
+  host_header         = "whitehair.store"
   ami_amznlinux3      = "ami-0f1e61a80c7ab943e"
+  ami_ubuntu20_04     = "ami-042e76978adeb8c48"
+  acm_arn             = "arn:aws:acm:${local.region}:${local.account}:certificate/16042306-a754-4583-9bb1-c4d498e5d59f"
   ec2_type_bastion    = "t3.medium"
   vpc_id              = module.vpc.vpc_id
   pub_subnet          = module.vpc.pub_subnet
@@ -64,7 +71,7 @@ module "compute" {
   web_alb_sg          = module.vpc.web_alb_sg
   was_alb_sg          = module.vpc.was_alb_sg
   lb_type_application = "application"
-  port_HTTP           = "HTTP"
+  protocol            = "HTTP"
   port_80             = "80"
   port_443            = "443"
   port_8080           = "8080"
@@ -90,16 +97,16 @@ module "compute" {
 #######################################################
 
 module "container" {
-  source = "./module/container"
+  source                             = "./module/container"
   region                             = local.region
   tag_name                           = local.tag_name
-  account = local.account
+  account                            = local.account
   container_name                     = "jinwoo"
   front_arn                          = module.compute.aws_lb_target_group_80
   app_back_tg_arn                    = module.compute.aws_lb_target_group_8080
   job_back_tg_arn                    = module.compute.aws_lb_target_group_8888
-  protocol_tcp = module.vpc.protocol_tcp
-  protocol_http = "http"
+  protocol_tcp                       = module.vpc.protocol_tcp
+  protocol_http                      = "http"
   front_container_port               = "80"
   job_container_port                 = "8888"
   app_container_port                 = "8080"
@@ -117,10 +124,10 @@ module "container" {
   front_health_check_grace_period_seconds = "0"
   back_health_check_grace_period_seconds  = "30"
 
-  execution_role_arn          = "arn:aws:iam::${local.account}:role/ecsTaskExecutionRole"
-  network_mode                = "awsvpc"
-  task_def_cpu                = "512"
-  task_def_memory             = "1024"
+  execution_role_arn = "arn:aws:iam::${local.account}:role/ecsTaskExecutionRole"
+  network_mode       = "awsvpc"
+  task_def_cpu       = "512"
+  task_def_memory    = "1024"
 }
 
 
