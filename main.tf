@@ -1,5 +1,5 @@
 ### 수정 필요 부분
-# 1. local
+# 0. local
 ## tag_name
 ## region
 ## account
@@ -9,6 +9,7 @@
 ## db_username
 ## db_password
 ## acm_arn
+## host_header
 ## key_name
 ## ami_ubuntu20_04 -> 필요시 변경
 # 3. container
