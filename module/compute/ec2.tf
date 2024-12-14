@@ -27,7 +27,7 @@ resource "aws_instance" "bastion_ec2" {
 resource "aws_instance" "Monitoring_ec2" {
   ami                         = var.ami_ubuntu20_04
   instance_type               = "t3.large"
-  key_name                    = "${var.tag_name}-key"
+  key_name                    = "${var.key_name}-key"
   availability_zone           = "${var.region}${var.ava_zone[1]}"
   subnet_id                   = var.pri_subnet[1]
   vpc_security_group_ids      = [var.monitoring_sg]
