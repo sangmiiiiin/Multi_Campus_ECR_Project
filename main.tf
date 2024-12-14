@@ -3,6 +3,8 @@
 ## tag_name
 ## region
 ## account
+# 1. VPC
+## sg_office_ip
 # 2. compute
 ## db_username
 ## db_password
