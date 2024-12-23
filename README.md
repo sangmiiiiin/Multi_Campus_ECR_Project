@@ -1,4 +1,4 @@
-# jinwoo-recruit-terraform-code
+# ecr-team-terraform-code
 Terraform code for configuring recruit infrastructure
 
 ## VPC, Compute, ECS

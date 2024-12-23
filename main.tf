@@ -16,9 +16,9 @@
 ## container_name 
 
 locals {
-  tag_name = "jinwoo-ap2"
+  tag_name = "ecr-jobposting"
   region   = "ap-northeast-2"
-  account  = "981638470970"
+  account  = "321034821382"
 }
 
 #######################################################
@@ -33,11 +33,11 @@ module "vpc" {
   tag_name     = local.tag_name
   ava_zone     = ["a", "c"]
   no           = ["1", "2", "3", "4"]
-  cidr_public  = ["10.0.0.0/24", "10.0.2.0/24"]
-  cidr_private = ["10.0.4.0/24", "10.0.6.0/24"]
-  cidr_db      = ["10.0.8.0/24", "10.0.10.0/24"]
+  cidr_public  = ["10.0.0.0/24", "10.0.1.0/24"]
+  cidr_private = ["10.0.2.0/24", "10.0.3.0/24"]
+  cidr_db      = ["10.0.4.0/24", "10.0.5.0/24"]
   cidr_all     = "0.0.0.0/0"
-  sg_office_ip = "175.200.184.33/32"
+  sg_office_ip = "0.0.0.0/0" #코드 공유를 위해 any_open
   protocol_tcp = "tcp"
   protocol_all = "-1"
   port_all     = "0"
@@ -60,11 +60,11 @@ module "compute" {
   region              = local.region
   ava_zone            = ["a", "c"]
   tag_name            = local.tag_name
-  key_name            = "jinwoo-ap2"
-  host_header         = "whitehair.store"
+  key_name            = "multi"
+  host_header         = "laurar.store"
   ami_amznlinux3      = "ami-0f1e61a80c7ab943e"
   ami_ubuntu20_04     = "ami-042e76978adeb8c48"
-  acm_arn             = "arn:aws:acm:${local.region}:${local.account}:certificate/16042306-a754-4583-9bb1-c4d498e5d59f"
+  acm_arn             = "arn:aws:acm:${local.region}:${local.account}:certificate/e6792665-9a9e-4470-8898-fed8b3c8eaec"
   ec2_type_bastion    = "t3.medium"
   vpc_id              = module.vpc.vpc_id
   pub_subnet          = module.vpc.pub_subnet
@@ -88,8 +88,8 @@ module "compute" {
   db_engine_version    = "8.0"
   db_allocated_storage = "20"
   db_instance_class    = "db.t3.medium"
-  db_username          = "jinwoo"
-  db_password          = "jinwoo1!"
+  db_username          = "master"
+  db_password          = "master-password"
   db_storage_type      = "gp3"
   db_port              = "3306"
   db_sg                = module.vpc.db_sg
@@ -104,7 +104,7 @@ module "container" {
   region                             = local.region
   tag_name                           = local.tag_name
   account                            = local.account
-  container_name                     = "jinwoo"
+  container_name                     = "${local.tag_name}-container"
   front_arn                          = module.compute.aws_lb_target_group_80
   app_back_tg_arn                    = module.compute.aws_lb_target_group_8080
   job_back_tg_arn                    = module.compute.aws_lb_target_group_8888
