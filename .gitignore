@@ -1,0 +1,2 @@
+# aws-provider 용량 이슈로 gitignore 추가
+terraform-provider-aws_v5.45.0_x5

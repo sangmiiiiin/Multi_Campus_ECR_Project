@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"backend","Source":"./module/backend","Dir":"module/backend"},{"Key":"compute","Source":"./module/compute","Dir":"module/compute"},{"Key":"container","Source":"./module/container","Dir":"module/container"},{"Key":"lock","Source":"./module/lock","Dir":"module/lock"},{"Key":"vpc","Source":"./module/vpc","Dir":"module/vpc"}]}
