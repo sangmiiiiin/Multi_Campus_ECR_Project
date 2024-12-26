@@ -64,7 +64,7 @@ module "compute" {
   host_header         = "laurar.store"
   ami_amznlinux3      = "ami-0f1e61a80c7ab943e"
   ami_ubuntu20_04     = "ami-042e76978adeb8c48"
-  acm_arn             = "arn:aws:acm:${local.region}:${local.account}:certificate/f20d4f9e-1076-47a2-8dd5-23e4a44518aa"
+  acm_arn             = "arn:aws:acm:${local.region}:${local.account}:certificate/ff4fe66d-67d4-407c-8365-7eb09a125e6b"
   ec2_type_bastion    = "t3.medium"
   vpc_id              = module.vpc.vpc_id
   pub_subnet          = module.vpc.pub_subnet

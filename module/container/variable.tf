@@ -110,3 +110,11 @@ variable "front_health_check_grace_period_seconds" {
 variable "back_health_check_grace_period_seconds" {
   type = string
 }
+
+variable "services" {
+  default = [
+    "ecr-jobposting-back-job-service",
+    "ecr-jobposting-front-service",
+    "ecr-jobposting-back-app-service"
+  ]
+}

@@ -10,11 +10,11 @@ terraform {
     }
   }
 
-  # backend "s3" {
-  #   dynamodb_table = "ecr-jobposting-terraform-lock"
-  #   key            = "dev/terraform.tfstate"
-  #   bucket         = "ecr-jobposting-terraform-repo-1"
-  #   encrypt        = true
-  #   region         = "ap-northeast-2"
-  # }
+  backend "s3" {
+    dynamodb_table = "ecr-jobposting-terraform-lock"
+    key            = "dev/terraform.tfstate"
+    bucket         = "ecr-jobposting-terraform-repo-1"
+    encrypt        = true
+    region         = "ap-northeast-2"
+  }
 }

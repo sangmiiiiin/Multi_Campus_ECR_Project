@@ -1,6 +1,10 @@
 ### ECS Cluster 생성 ###
 resource "aws_ecs_cluster" "ECSCluster" {
     name = "${var.tag_name}-ecs-cluster"
+    setting {
+      name  = "containerInsights"
+      value = "enabled"
+  }
 }
 
 ### ECS Front Service
@@ -193,4 +197,52 @@ resource "aws_ecs_task_definition" "ECS_Task_Def_app" {
     ]
     cpu = var.task_def_cpu
     memory = var.task_def_memory
+}
+
+# 오토스케일링 타겟 설정
+resource "aws_appautoscaling_target" "ecs_scaling_target" {
+  for_each           = toset(var.services)
+  service_namespace  = "ecs"
+  resource_id        = "service/${aws_ecs_cluster.ECSCluster.name}/${each.key}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  min_capacity       = 1
+  max_capacity       = 5
+}
+
+# CPU 기반 스케일링 정책
+resource "aws_appautoscaling_policy" "ecs_scaling_policy_cpu" {
+  for_each           = toset(var.services)
+  name               = "${each.key}-cpu-scaling-policy"
+  service_namespace  = "ecs"
+  resource_id        = aws_appautoscaling_target.ecs_scaling_target[each.key].resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_scaling_target[each.key].scalable_dimension
+  policy_type        = "TargetTrackingScaling"
+
+  target_tracking_scaling_policy_configuration {
+    target_value       = 50.0
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
+  }
+}
+
+# 메모리 기반 스케일링 정책 (선택 사항)
+resource "aws_appautoscaling_policy" "ecs_scaling_policy_memory" {
+  for_each           = toset(var.services)
+  name               = "${each.key}-memory-scaling-policy"
+  service_namespace  = "ecs"
+  resource_id        = aws_appautoscaling_target.ecs_scaling_target[each.key].resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_scaling_target[each.key].scalable_dimension
+  policy_type        = "TargetTrackingScaling"
+
+  target_tracking_scaling_policy_configuration {
+    target_value       = 75.0
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+    }
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
+  }
 }
